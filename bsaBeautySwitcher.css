@@ -1,0 +1,56 @@
+#mobileStats > .bsaBeautySwitcherIconBtn {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMSIgY3k9IjEwIiByPSI0Ii8+PHBhdGggZD0iTTQuNSAyM2MuNy00LjMgMy02LjUgNi41LTYuNSAyLjUgMCA0LjQgMS4xIDUuNSAzLjIiLz48cGF0aCBkPSJNMTkgOWg4bTAgMC0zLTNtMyAzLTMgM00yNyAyMGgtOG0wIDAgMy0zbS0zIDMgMyAzIi8+PC9nPjwvc3ZnPg==");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 100%;
+    background-color: transparent !important;
+}
+
+ .bsa-beauty-quick-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: transparent;
+}
+
+.bsa-beauty-quick-dialog {
+    position: fixed;
+    width: min(360px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background: #111;
+    color: inherit;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+}
+
+.bsa-beauty-quick-header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+.bsa-beauty-quick-title { color:#FFD700; font-size:16px; font-weight:bold; }
+.bsa-beauty-quick-close {
+    appearance: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0 2px;
+    border: 0 !important;
+    outline: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #aaa;
+    font: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+.bsa-beauty-quick-close:hover { color:#fff; background:transparent !important; }
+.bsa-beauty-quick-close:focus-visible { outline:1px dotted #aaa; outline-offset:2px; }
+.bsa-beauty-quick-list { max-height: 15em; overflow-y:auto; border:1px solid #444; border-radius:4px; background:#181818; }
+.bsa-beauty-quick-item { display:block; width:100%; box-sizing:border-box; padding:.55em .7em; border:0; border-bottom:1px solid #333; background:transparent; color:inherit; text-align:left; font:inherit; cursor:pointer; }
+.bsa-beauty-quick-item:last-child { border-bottom:0; }
+.bsa-beauty-quick-item:hover { background:#242424; }
+.bsa-beauty-quick-item.is-active { color:#FFD700; font-weight:bold; }
+.bsa-beauty-quick-face { display:block; margin-top:10px; padding-top:9px; border-top:1px solid #333; }
+.bsa-beauty-quick-actions { display:flex; justify-content:flex-end; margin-top:10px; }

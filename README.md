@@ -1,4 +1,4 @@
-# DoL BSA Beauty Switcher v0.3.18
+# DoL BSA Beauty Switcher v0.4
 
 基於 BeautySelectorAddon（BSA）的多美化快速切換工具。
 
@@ -65,8 +65,19 @@ AU 美化
 
 如果使用的美化不需要此功能，也可以直接在「美化切換」中關閉。
 
-## 更新日誌
+## 前置需求
 
+**maplebirch 秋楓白樺框架**
+    - 建議版本：`>=5.x`
+    - 最低版本：`3.0.15`
+
+## 更新日誌
+###v0.4
+- 新增側邊欄icon按鈕入口
+    - 點擊顯示簡易切換UI
+- boot文件增加依賴申明
+    - **需搭配maplebirch 框架使用**
+    
 ### v0.3.18
 
 - 模組正式更名為 **DoL BSA Beauty Switcher**。

@@ -623,6 +623,158 @@
         return root;
     }
 
+    function closeQuickUi() {
+        const backdrop = document.getElementById("bsaBeautySwitcherQuickBackdrop");
+        backdrop?.__bsaBeautySwitcherCleanup?.();
+        backdrop?.remove();
+    }
+
+    function openFullUi() {
+        closeQuickUi();
+        try {
+            new Wikifier(null, '<<maplebirchReplace "bsaBeautySwitcher" "title">>');
+        } catch (e) {
+            console.error(TAG, "開啟完整設定失敗:", e);
+        }
+    }
+
+    function openQuickUi() {
+        closeQuickUi();
+
+        const backdrop = document.createElement("div");
+        backdrop.id = "bsaBeautySwitcherQuickBackdrop";
+        backdrop.className = "bsa-beauty-quick-backdrop";
+
+        const dialog = document.createElement("div");
+        dialog.className = "bsa-beauty-quick-dialog";
+        backdrop.appendChild(dialog);
+
+        backdrop.addEventListener("click", e => {
+            if (e.target === backdrop) closeQuickUi();
+        });
+
+        const render = () => {
+            dialog.replaceChildren();
+
+            const header = document.createElement("div");
+            header.className = "bsa-beauty-quick-header";
+
+            const title = document.createElement("div");
+            title.className = "bsa-beauty-quick-title";
+            title.textContent = "美化切換";
+
+            const close = document.createElement("button");
+            close.type = "button";
+            close.className = "bsa-beauty-quick-close";
+            close.textContent = "×";
+            close.addEventListener("click", closeQuickUi);
+            header.append(title, close);
+            dialog.appendChild(header);
+
+            const managed = getManagedItems();
+            const active = getActiveManagedType();
+
+            if (!managed.length) {
+                dialog.appendChild(makeUiHint("尚未設定要快速切換的人模美化。請先進入完整設定。"));
+            } else {
+                const list = document.createElement("div");
+                list.className = "bsa-beauty-quick-list";
+
+                const addItem = (label, type) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "bsa-beauty-quick-item";
+                    const isActive = (type || null) === (active || null);
+                    if (isActive) button.classList.add("is-active");
+                    button.textContent = `${isActive ? "✓ " : ""}${label}`;
+                    button.addEventListener("click", async () => {
+                        try {
+                            await setActiveManagedType(type);
+                            render();
+                        } catch (e) {
+                            console.error(TAG, "切換美化失敗:", e);
+                        }
+                    });
+                    list.appendChild(button);
+                };
+
+                addItem("關閉已管理的美化", null);
+                for (const item of managed) {
+                    addItem(`[${item.modRef?.name || "?"}] ${item.type}`, item.type);
+                }
+                dialog.appendChild(list);
+            }
+
+            const faceLabel = document.createElement("label");
+            faceLabel.className = "bsa-beauty-quick-face";
+            const face = document.createElement("input");
+            face.type = "checkbox";
+            face.checked = getFaceFallbackEnabled();
+            face.addEventListener("change", () => setFaceFallbackEnabled(face.checked));
+            faceLabel.append(face, " 臉部素材相容回退");
+            dialog.appendChild(faceLabel);
+
+            const actions = document.createElement("div");
+            actions.className = "bsa-beauty-quick-actions";
+            const full = document.createElement("button");
+            full.type = "button";
+            full.textContent = "完整設定";
+            full.addEventListener("click", openFullUi);
+            actions.appendChild(full);
+            dialog.appendChild(actions);
+        };
+
+        render();
+        document.body.appendChild(backdrop);
+
+        const positionDialog = () => {
+            const anchor = document.querySelector("#mobileStats > .bsaBeautySwitcherIconBtn")
+                || document.querySelector(".bsaBeautySwitcherIconBtn");
+            if (!anchor?.isConnected || !dialog.isConnected) return;
+
+            const gap = 8;
+            const edge = 12;
+            const anchorRect = anchor.getBoundingClientRect();
+            const dialogRect = dialog.getBoundingClientRect();
+
+            let left = anchorRect.left - dialogRect.width - gap;
+            if (left < edge) {
+                const rightSide = anchorRect.right + gap;
+                if (rightSide + dialogRect.width <= window.innerWidth - edge) {
+                    left = rightSide;
+                } else {
+                    left = Math.max(edge, Math.min(
+                        anchorRect.left,
+                        window.innerWidth - dialogRect.width - edge
+                    ));
+                }
+            }
+
+            let top = anchorRect.top;
+            if (top + dialogRect.height > window.innerHeight - edge) {
+                top = window.innerHeight - dialogRect.height - edge;
+            }
+            top = Math.max(edge, top);
+
+            dialog.style.left = `${Math.round(left)}px`;
+            dialog.style.top = `${Math.round(top)}px`;
+        };
+
+        requestAnimationFrame(positionDialog);
+        window.addEventListener("resize", positionDialog, { passive: true });
+        window.addEventListener("scroll", positionDialog, { passive: true, capture: true });
+
+        backdrop.__bsaBeautySwitcherCleanup = () => {
+            window.removeEventListener("resize", positionDialog);
+            window.removeEventListener("scroll", positionDialog, true);
+        };
+    }
+
+    function toggleQuickUi() {
+        if (document.getElementById("bsaBeautySwitcherQuickBackdrop")) closeQuickUi();
+        else openQuickUi();
+    }
+
     function installFaceFallback(force = false) {
         if (!window.Renderer?.ImageLoader?.loadImage) return false;
 
@@ -666,6 +818,10 @@
         faceCandidates: buildFaceCandidates,
         refresh: refreshRenderer,
         scheduleRefresh,
+        openQuickUi,
+        closeQuickUi,
+        toggleQuickUi,
+        openFullUi,
         installFaceFallback,
         faceHookStatus,
         get originalLoadImage() { return originalLoadImage; }

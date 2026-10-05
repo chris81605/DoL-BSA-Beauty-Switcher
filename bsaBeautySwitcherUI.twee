@@ -1,5 +1,11 @@
 :: BSABeautySwitcher[widget]
 
+
+
+<<widget "bsaBeautySwitcherQuickButton">>
+<input type="button" class="saveMenuButton bsaBeautySwitcherIconBtn" value="" title="美化切換" onclick="BSABeautySwitcher.toggleQuickUi()">
+<</widget>>
+
 <<widget "bsaBeautySwitcherButton">>
 <!-- 打開美化切換面板 -->
 

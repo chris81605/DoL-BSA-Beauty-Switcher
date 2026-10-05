@@ -10,6 +10,7 @@
                 if (maplebirchMod) {
                     maplebirch.modList.pushUnique("美化切換");
                     maplebirch.tool.addTo('MenuSmall', 'bsaBeautySwitcherButton');
+                    maplebirch.tool.addTo('HintMobile', 'bsaBeautySwitcherQuickButton');
 
                     logger.log(
                         '[BSABeautySwitcher] Maplebirch 已註冊美化切換'

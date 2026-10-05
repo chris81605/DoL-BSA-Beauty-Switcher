@@ -4,8 +4,10 @@
     "cn": "BSA 美化切換器",
     "en": "DoL BSA Beauty Switcher"
   },
-  "version": "0.3.18",
-  "styleFileList": [],
+  "version": "0.4",
+  "styleFileList": [
+    "bsaBeautySwitcher.css"
+  ],
   "scriptFileList": [
     "bsaBeautySwitcher.js"
   ],
