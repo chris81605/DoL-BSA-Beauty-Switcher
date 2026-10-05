@@ -1,0 +1,33 @@
+{
+  "name": "DoL BSA Beauty Switcher",
+  "nickName": {
+    "cn": "BSA 美化切換器",
+    "en": "DoL BSA Beauty Switcher"
+  },
+  "version": "0.3.18",
+  "styleFileList": [],
+  "scriptFileList": [
+    "bsaBeautySwitcher.js"
+  ],
+  "scriptFileList_inject_early": [
+    "bsaBeautySwitcherRegister.js"
+  ],
+  "tweeFileList": [
+    "bsaBeautySwitcherUI.twee"
+  ],
+  "imgFileList": [],
+  "additionFile": [
+    "README.md"
+  ],
+  "addonPlugin": [],
+  "dependenceInfo": [
+    {
+      "modName": "ModLoader",
+      "version": ">=1.0.0"
+    },
+    {
+      "modName": "BeautySelectorAddon",
+      "version": ">=2.9.0"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+:: BSABeautySwitcher[widget]
+
+<<widget "bsaBeautySwitcherButton">>
+<!-- 打開美化切換面板 -->
+
+<<button "美化切換">>
+	<<maplebirchReplace "bsaBeautySwitcher" "title">>
+<</button>>
+
+<</widget>>
+
+
+<<widget "titleBsaBeautySwitcher">>
+
+	<<setupTabs>>
+
+	<div id="overlayTabs" class="tab">
+
+		<<closeButtonMobile>>
+
+		<<button "美化切換">>
+			<<toggleTab>>
+			<<replace #customOverlayContent>>
+				<<bsaBeautySwitcher>>
+			<</replace>>
+		<</button>>
+
+	</div>
+
+	<<closeButton>>
+
+<</widget>>
+
+
+<<widget "bsaBeautySwitcher">>
+
+	<div id="bsaBeautySwitcherContainer">
+		<<bsabeautyui>>
+	</div>
+
+<</widget>>
