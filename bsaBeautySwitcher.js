@@ -1,8 +1,8 @@
-(function () {
+;(function () {
     "use strict";
 
     const MOD = "DoL BSA Beauty Switcher";
-    const VERSION = "0.3.18";
+    const VERSION = "0.5";
     const TAG = "[BSABeautySwitcher]";
     const STORAGE_MANAGED = "BSABeautySwitcher.managedTypes";
     const STORAGE_FOLLOWERS = "BSABeautySwitcher.followers";
@@ -86,6 +86,13 @@
         return getAllTypes().filter(item => wanted.has(item.type));
     }
 
+    const SAVE_ACTIVE_KEY = "bsaBeautySwitcherActiveType";
+    let saveSyncBusy = false;
+
+    function getSaveVariables() {
+        return window.State?.variables || window.V || null;
+    }
+
     function getActiveManagedType() {
         const api = bsa();
         if (!api) return null;
@@ -93,7 +100,21 @@
         return (api.typeOrderUsed || []).find(item => managed.has(item.type))?.type || null;
     }
 
-    async function setActiveManagedType(typeName) {
+    function getSavedActiveManagedType() {
+        const vars = getSaveVariables();
+        if (!vars || !Object.prototype.hasOwnProperty.call(vars, SAVE_ACTIVE_KEY)) {
+            return undefined;
+        }
+        return typeof vars[SAVE_ACTIVE_KEY] === "string" ? vars[SAVE_ACTIVE_KEY] : null;
+    }
+
+    function setSavedActiveManagedType(typeName) {
+        const vars = getSaveVariables();
+        if (!vars) return;
+        vars[SAVE_ACTIVE_KEY] = typeof typeName === "string" ? typeName : null;
+    }
+
+    async function setActiveManagedType(typeName, options = {}) {
         const api = bsa();
         if (!api) throw new Error(`${TAG} BeautySelectorAddon not found.`);
 
@@ -120,8 +141,45 @@
 
         api.typeOrderUsed = next;
         await api.saveOrder(next.map(item => item.type));
+
+        const activeType = selected?.type || null;
+        if (options.save !== false) setSavedActiveManagedType(activeType);
+
         scheduleRefresh(100);
-        return selected?.type || null;
+        return activeType;
+    }
+
+    // Passage 建立時依目前存檔恢復所選美化。
+    async function syncActiveManagedTypeFromSave() {
+        if (saveSyncBusy) return;
+
+        const api = bsa();
+        const vars = getSaveVariables();
+        if (!api || !vars) return;
+
+        saveSyncBusy = true;
+        try {
+            let savedType = getSavedActiveManagedType();
+
+            // 舊存檔沒有此欄位時，沿用當下 BSA 狀態作為初始值。
+            if (savedType === undefined) {
+                setSavedActiveManagedType(getActiveManagedType());
+                return;
+            }
+
+            const managed = new Set(getManagedTypes());
+            if (savedType !== null && !managed.has(savedType)) {
+                savedType = null;
+                setSavedActiveManagedType(null);
+            }
+
+            if (getActiveManagedType() === savedType) return;
+            await setActiveManagedType(savedType, { save: false });
+        } catch (e) {
+            console.error(TAG, "Failed to sync active beauty from save:", e);
+        } finally {
+            saveSyncBusy = false;
+        }
     }
 
     function unique(list) {
@@ -812,7 +870,9 @@
         setFollowers,
         getManagedItems,
         getActiveManagedType,
+        getSavedActiveManagedType,
         setActiveManagedType,
+        syncActiveManagedTypeFromSave,
         getFaceFallbackEnabled,
         setFaceFallbackEnabled,
         faceCandidates: buildFaceCandidates,
@@ -846,6 +906,11 @@
             root.append(makeManagerUi(), makeTypeSetupUi(sortSession));
             this.output.append(root);
         }
+    });
+
+    // 每次 Passage 建立時確認 BSA 狀態與目前存檔一致；讀檔後也會在此同步。
+    $(document).on(":passagestart.bsaBeautySwitcher", () => {
+        void syncActiveManagedTypeFromSave();
     });
 
     // 安裝臉部素材回退。
