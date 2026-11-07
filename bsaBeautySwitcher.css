@@ -54,3 +54,9 @@
 .bsa-beauty-quick-item.is-active { color:#FFD700; font-weight:bold; }
 .bsa-beauty-quick-face { display:block; margin-top:10px; padding-top:9px; border-top:1px solid #333; }
 .bsa-beauty-quick-actions { display:flex; justify-content:flex-end; margin-top:10px; }
+
+/* 僅在 V.debug === 1 時由 JavaScript 建立的 BSA 全域操作區塊。 */
+.bsa-beauty-debug-section { margin: 0.65em 0 1em; padding: 0.7em; border: 1px dashed #888; border-radius: 4px; }
+.bsa-beauty-debug-actions { display: flex; flex-wrap: wrap; gap: 0.5em; margin-top: 0.5em; }
+.bsa-beauty-debug-actions button { flex: 1 1 9em; }
+.bsa-beauty-debug-status { margin-top: 0.4em; font-size: 0.9em; }

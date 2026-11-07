@@ -2,7 +2,7 @@
     "use strict";
 
     const MOD = "DoL BSA Beauty Switcher";
-    const VERSION = "0.5";
+    const VERSION = "0.5.1";
     const TAG = "[BSABeautySwitcher]";
     const STORAGE_MANAGED = "BSABeautySwitcher.managedTypes";
     const STORAGE_FOLLOWERS = "BSABeautySwitcher.followers";
@@ -448,6 +448,51 @@
             const all = getAllTypes();
             const managedNow = getManagedTypes();
             const managedSet = new Set(managedNow);
+
+            // 僅在遊戲 Debug 模式顯示，不修改一般美化管理與附屬包設定。
+            if (getSaveVariables()?.debug === 1) {
+                const debugSection = document.createElement("div");
+                debugSection.className = "bsa-beauty-debug-section";
+                debugSection.appendChild(makeSectionHeading("Debug：BSA 全域控制"));
+                debugSection.appendChild(makeUiHint(
+                    "直接啟用或停用所有已註冊的 BSA Type，不會更動快速切換的管理清單。此操作可能造成不同人模互相覆蓋。"
+                ));
+                const actions = document.createElement("div");
+                actions.className = "bsa-beauty-debug-actions";
+                const status = document.createElement("div");
+                status.className = "bsa-beauty-debug-status";
+                const makeButton = (title, enabled) => {
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.textContent = title;
+                    button.addEventListener("click", async () => {
+                        const apiNow = bsa();
+                        if (!apiNow) return;
+                        const types = getAllTypes();
+                        const next = enabled ? types.slice() : [];
+                        for (const control of actions.querySelectorAll("button")) control.disabled = true;
+                        status.textContent = "正在儲存 BSA 啟用狀態…";
+                        try {
+                            // 成功儲存後才開啟覆寫，避免失敗時留下錯誤的同步狀態。
+                            await apiNow.saveOrder(next.map(item => item.type));
+                            apiNow.typeOrderUsed = next;
+                            status.textContent = enabled
+                                ? `已啟用全部 ${next.length} 個 Type。`
+                                : "已停用全部 Type。";
+                            scheduleRefresh(100);
+                        } catch (error) {
+                            console.error(TAG, "Debug BSA bulk operation failed:", error);
+                            status.textContent = "操作失敗，請查看控制台。";
+                        } finally {
+                            for (const control of actions.querySelectorAll("button")) control.disabled = false;
+                        }
+                    });
+                    return button;
+                };
+                actions.append(makeButton("啟用所有 Type", true), makeButton("停用所有 Type", false));
+                debugSection.append(actions, status);
+                root.appendChild(debugSection);
+            }
 
             root.appendChild(makeUiTitle("美化包設定"));
             root.appendChild(makeUiHint(
